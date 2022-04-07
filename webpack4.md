@@ -19,3 +19,75 @@
 
 `html文件`：默认不能使用HMR功能，同时会导致问题：html文件不能热更新（不用做HMR功能）
     解决：修改entry入口，将html文件引入，原字符串改为字符串数组(依旧无法使用HMR)
+    
+
+# source-map
+一种 提供源代码到构建后代码映射 技术（如果构建后代码出错了，通过映射可以追踪代码错误）
+> [inline-|hidden-|eval-|][nosources-][cheap-[module-]]source-map
+* source-map: `外部`
+    *  错误代码的准确信息 和 源代码的错误位置
+* inline-source-map: `内联`
+    * 只生成一个内联source-map
+    * 错误代码的准确信息 和 源代码的错误位置
+* hidden-source-map: `外部`
+    * 错误代码错误原因，但是没有错误位置
+    * 不能追踪到源代码错误，只能提示到构建后代码的错误位置（只隐藏源代码）
+* eval-source-map: `内联`
+    * 每一个文件都生成对应的source-map
+    * 错误代码的准确信息 和 源代码的错误位置（会多一个文件hash值）
+* nosources-source-map: `外部`
+    * 错误代码的准确信息，但是没有任何源代码信息 （全部隐藏）
+* cheap-source-map: `外部`
+    * 错误代码的准确信息，源代码的错误位置
+    * 只能精确到行，其他的可以精确到列
+* cheap-module-source-map: `外部`
+    * 错误代码的准确信息，源代码的错误位置
+    * module会将loader的source map加入
+
+`内联` 和 `外部` 的区别
+1. 外部生成了文件，内联没有
+2. 内联构建速度更快
+
+开发环境：速度快，调试更友好
+> 速度快(eval > inline > cheap ...)  val-cheap-source-map第一块
+> 调试更友好 source-map > cheap-module-source-map > cheap-source-map
+eval-source-map / eval-cheap-module-source-map
+
+生产环境：源代码要不要隐藏，调试要不要友好
+> 内联会让代码的体积变大，所以在生产环境不用内联
+hidden-source-map
+nosources-source-map
+
+
+# oneOf 
+配置的loader只会匹配一个
+注意：不能有两个配置处理同一种类型
+
+# 缓存
+
+    {
+        test: /\.js$/,
+        exclued: /node_modules/,
+        loader: 'babel-loader',
+        options: {
+            presets: [
+                '@babel/preset-env',
+                {
+                    useBuiltIns: 'usage',
+                    corejs: { version: 3 },
+                    targets: {
+                        chrome: '60',
+                        firefox: '50'
+                    }
+                }
+            ],
+            // 开启babel缓存
+            // 第二次构建时，会读取之前的缓存
+            cacheDirectory: true
+        }
+    }
+
+
+
+
+
