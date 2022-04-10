@@ -64,6 +64,8 @@ nosources-source-map
 注意：不能有两个配置处理同一种类型
 
 # 缓存
+1. babel缓存
+> 让第二次打包构建速度更快
 
     {
         test: /\.js$/,
@@ -86,6 +88,24 @@ nosources-source-map
             cacheDirectory: true
         }
     }
+2. 文件资源缓存
+让代码上线运行缓存更好使用
+> [hash:10]
+
+hash: 每次webpack构建时会生成一个唯一的hash值
+    
+    防止静态资源被缓存，可以在打包后文件增加[hash:10]作为文件名称一部分。
+    问题：因为js和css同时使用一个hash值，如果重新打包会导致所有缓存失效（可能我只改了一个文件）
+> [chunkhash:10]
+
+chunkhash: 根据chunk生成的hash值，如果打包来源于同一个chunk，那么hash值就一样
+
+问题：js和css的hash值还是一样的，因为css是在js中被引入的，所以同属于一个chunk
+
+> [contenthash:10]
+
+contenthash: 根据文件的内容生成hash值，不同文件的hash值一定不一样
+
 
 
 
