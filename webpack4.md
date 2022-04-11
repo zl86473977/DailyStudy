@@ -130,7 +130,7 @@ package.json配置
 
 # code split
 
-1. 多入口多打包文件
+> 多入口多打包文件
 
     module.exports = {
         // 单入口
@@ -147,7 +147,7 @@ package.json配置
         }
     }
 
-2. 独立并去重node_module代码
+> 独立并去重node_module代码
 
     module.exports = {
         // 单入口
@@ -166,7 +166,7 @@ package.json配置
         }
     }
 
-3. js代码
+> js代码
 
     // 通过js代码，让某个文件被单独打包成一个chunk
     // import动态导入语法：能将某个文件单独打包
