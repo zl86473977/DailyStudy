@@ -116,11 +116,9 @@ contenthash: 根据文件的内容生成hash值，不同文件的hash值一定�
 
 package.json配置
 
-    "sideEffects": false
+    "sideEffects": false // 所有代码都没有副作用(都可以进行tree shaking)
 
-所有代码都没有副作用(都可以进行tree shaking)
-
-可能会把css 或者 @/babel/polyfill(副作用) 文件干掉
+问题：可能会把css 或者 @/babel/polyfill(副作用) 文件干掉
 
 解决：
 在package.json中进行配置，即匹配到的任何css文件都不进行Tree Shaking
@@ -128,6 +126,61 @@ package.json配置
     "sideEffects": ["
         *.css"
     ]
+
+
+# code split
+
+1. 多入口多打包文件
+
+    module.exports = {
+        // 单入口
+        // entry: './src/js/index.js',
+        // 多入口: 有一个入口，最终输出就有一个bundle
+        entry: {
+            main: './src/js/index.js',
+            test: './src/js/test.js',
+        },
+        output: {
+            // 取文件名[name]
+            filename: 'js/[name].[contenthash:10].js',
+            path: resolve(__dirname, 'build')
+        }
+    }
+
+2. 独立并去重node_module代码
+
+    module.exports = {
+        // 单入口
+        // entry: './src/js/index.js',
+        output: {
+            // 取文件名[name]
+            filename: 'js/[name].[contenthash:10].js',
+            path: resolve(__dirname, 'build')
+        },
+        // 可以将node_modules中代码单独打包一个chunk最终输出
+        // 自动分析多入口chunk中，有么有公共的文件，如果有会打包成单独一个chunk
+        optimization: {
+            splitChunks: {
+                chunks: 'all'
+            }
+        }
+    }
+
+3. js代码
+
+    // 通过js代码，让某个文件被单独打包成一个chunk
+    // import动态导入语法：能将某个文件单独打包
+    import(/* webpackChunkName: 'test' */./test)
+        .then(({fun1, fun2}) => {
+            fun1()
+        })
+        .catch(() => {
+            console.log('文件加载失败了');
+        })
+        
+
+
+
 
 
 
