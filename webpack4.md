@@ -179,8 +179,70 @@ package.json配置
         })
         
 
+# 懒加载和预加载
+    
+    // 懒加载：当文件需要使用时才加载
+    // 预加载：prefetch: 会在使用之前，提前加载js文件（虽然好用但是兼容性差，慎用）
+    // 正常加载可以认为是并行加载（同一时间加载多个文件）
+    // 预加载prefetch：等其他资源加载完毕，浏览器空闲了，再偷偷加载资源
+    import(/* webpackChunkName: 'test', webpackPrefetch: true */./test)
+        .then(({fun1, fun2}) => {
+            fun1()
+        })
 
 
+# PWA 渐进式网络开发应用程序（离线可访问）
+
+workbox --> workbox-webpack-plugin 
+    
+    const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+    module.exports = {
+        entry: 'xxx',
+        output: {xxx},
+        module: {},
+        plugins: [
+            new MiniCssExtractPlugin({filename: 'css/built.[contenthash:10].css'}),
+            new OptimizeCssAssetsWebpackPlugin(),
+            new HtmlWebpackPlugin({
+                template: '',
+                minify: {
+                    collapseWhitespace: true,
+                    removeComments: true,
+                }
+            }),
+            new WorkboxWebpackPlugin.GenerateSW({
+                // 1.帮助serviceworker快速启动
+                // 2.删除旧的 serviceworker
+                // 生成一个serviceworker配置文件
+                clientsClaim: true,
+                skipWaiting: true,
+            })
+        ],
+        mode: 'production',
+        devtool: 'source-map'
+    }
+
+index.js
+
+1. eslint不认识window、navigator全局变量
+
+解决：修改package.json中的eslintConfig配置，增加
+    
+    "env": {
+        "browser": true
+    }
+    
+    if('serviceworker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceworker.register('./service-worker.js')
+                .then(() => {
+                    console.log('sw注册成功了');
+                })
+                .catch(() => {
+                    console.error('sw注册失败了')
+                })
+        })
+    }
 
 
 
