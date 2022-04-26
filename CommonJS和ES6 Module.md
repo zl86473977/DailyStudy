@@ -74,7 +74,8 @@ CommonJS这种写法具体引入什么文件只有在代码运行时才确定，
 
 2. CommonJS导入是值拷贝，ES6 Module导入的是值的引用。
 
-CommonJS
+**CommonJS**
+
     // util.js
     function speak() {
         console.log('三国志真好玩');
@@ -91,7 +92,8 @@ CommonJS
     util.speak(); // 三国志真好玩
     console.log(util.name); // `zl`
     
-ES6 Module
+**ES6 Module**
+
     // util.js
     export let name = 'zl'
     export function speak() {
